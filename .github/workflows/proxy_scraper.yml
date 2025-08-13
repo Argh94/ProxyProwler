@@ -126,7 +126,7 @@ jobs:
         working-directory: ./Files
         run: python proxy_scraper.py
 
-      - name: Debug: List files in repository
+      - name: Debug:List files in repository
         run: |
           echo "Files in root directory:"
           ls -la
