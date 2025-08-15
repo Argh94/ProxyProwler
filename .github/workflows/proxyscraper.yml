@@ -138,7 +138,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Debug: List files
+      - name: Debug:List files
         run: |
           echo "Files in root directory:"
           ls -la
