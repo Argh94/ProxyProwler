@@ -113,7 +113,7 @@ def fetch_proxies_from_url(url, proxy_type, max_proxies=50):
             future_to_proxy = {executor.submit(check_proxy_status, server, port): (proxy, server, port) for proxy, server, port in proxy_checks}
             for future in as_completed(future_to_proxy):
                 proxy, server, port = future_to_proxy[future]
-                try:
+                попробуйте:
                     if future.result():
                         ping = measure_proxy_ping(server, port)
                         if ping is not None:
@@ -134,10 +134,12 @@ def fetch_proxies_from_url(url, proxy_type, max_proxies=50):
         return []
 
 def save_proxies_to_file(proxies, proxy_type):
-    filename = f"../{proxy_type}.txt"
+    output_dir = os.getenv('OUTPUT_DIR', 'Files')
+    filename = f"{output_dir}/{proxy_type}.txt"
     try:
         unique_proxies = list(set(proxy[0] for proxy in proxies))
         logging.debug(f"Unique proxies for {proxy_type}: {unique_proxies}")
+        os.makedirs(output_dir, exist_ok=True)
         with open(filename, 'w', encoding='utf-8') as file:
             if unique_proxies:
                 for proxy in unique_proxies:
@@ -146,7 +148,7 @@ def save_proxies_to_file(proxies, proxy_type):
                 file.write('')
         logging.info(f"Saved {len(unique_proxies)} unique {proxy_type} proxies to {filename}")
         if os.path.exists(filename):
-            logging.info(f"Confirmed: {filename} exists in the repository root")
+            logging.info(f"Confirmed: {filename} exists in {output_dir}")
         else:
             logging.error(f"Failed: {filename} was not created")
         return proxies
@@ -189,6 +191,8 @@ def update_readme(proxy_dict):
 
 **آخرین به‌روزرسانی:** {update_time_iran} (به وقت ایران)
 
+**فایل‌های پروکسی**: فایل‌های `SOCKS5.txt`, `SOCKS4.txt`, و `HTTPS.txt` در [بخش Releases](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/releases) در دسترس هستند.
+
 **ProxyProwler** یک ابزار قدرتمند و خودکار پایتون برای جمع‌آوری، بررسی و مدیریت پروکسی‌های **SOCKS5**، **SOCKS4** و **HTTPS** از منابع عمومی است. این پروژه با هدف ارائه پروکسی‌های فعال و باکیفیت برای توسعه‌دهندگان و کاربران طراحی شده و خروجی‌ها را در فایل‌های مرتب ذخیره می‌کند.
 
 ## 🎯 چرا ProxyProwler؟
@@ -203,7 +207,7 @@ def update_readme(proxy_dict):
 - ⚡ **اجرای موازی**: استفاده از ThreadPoolExecutor برای بررسی سریع پروکسی‌ها.
 - 📊 **اندازه‌گیری پینگ**: نمایش پینگ هر پروکسی برای انتخاب بهترین‌ها.
 - 🗑 **حذف پروکسی‌های غیرفعال**: فقط پروکسی‌های آنلاین ذخیره می‌شوند.
-- 🕒 **به‌روزرسانی دستی**: اجرا از طریق GitHub Actions با کنترل کامل کاربر.
+- 🕒 **به‌روزرسانی خودکار**: اجرا هر روز ساعت 2:30 به وقت ایران.
 
 ## 📋 پیش‌نیازها
 برای اجرای این پروژه به موارد زیر نیاز دارید:
@@ -214,7 +218,7 @@ def update_readme(proxy_dict):
   - `jdatetime`
 - نصب وابستگی‌ها:
   ```bash
-  pip install -r requirements.txt
+  pip install -r Files/requirements.txt
   
 ## 🛠 نحوه استفاده
 1. **دانلود پروکسی‌ها**:
