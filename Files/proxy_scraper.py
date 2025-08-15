@@ -13,7 +13,7 @@ import jdatetime
 import timeit
 import json
 
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 USER_AGENTS = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -109,7 +109,7 @@ def fetch_proxies_from_url(url, proxy_type, max_proxies=50):
                 else:
                     logging.debug(f"Invalid {proxy_type} proxy format: {line}")
         
-        with ThreadPoolExecutor(max_workers=30) as executor:
+        with ThreadPoolExecutor(max_workers=10) as executor:
             future_to_proxy = {executor.submit(check_proxy_status, server, port): (proxy, server, port) for proxy, server, port in proxy_checks}
             for future in as_completed(future_to_proxy):
                 proxy, server, port = future_to_proxy[future]
@@ -134,7 +134,7 @@ def fetch_proxies_from_url(url, proxy_type, max_proxies=50):
         return []
 
 def save_proxies_to_file(proxies, proxy_type):
-    output_dir = os.getenv('OUTPUT_DIR', 'Files')
+    output_dir = os.getenv('OUTPUT_DIR', '/tmp/proxies')
     filename = f"{output_dir}/{proxy_type}.txt"
     try:
         unique_proxies = list(set(proxy[0] for proxy in proxies))
@@ -169,16 +169,17 @@ def update_readme(proxy_dict):
         
         table_rows = ""
         for proxy_type, proxies in proxy_dict.items():
-            logging.debug(f"Processing {proxy_type} with {len(proxies)} proxies for README")
-            table_rows += f"\n### 🔗 {proxy_type} Proxies ({proxy_counts[proxy_type]} Active)\n"
-            table_rows += "| # | سرور (Server) | پورت (Port) | پینگ (Ping) | وضعیت |\n"
-            table_rows += "|---|---------------|-------------|-------------|-------|\n"
+            table_rows += f"\n<div align=\"center\">\n\n### 🔗 {proxy_type} Proxies ({proxy_counts[proxy_type]} Active)\n\n"
+            table_rows += "| # | سرور (Server) | پورت (Port) | پینگ (Ping) | وضعیت (Status) |\n"
+            table_rows += "|---|---------------|-------------|-------------|----------------|\n"
             sample_proxies = random.sample(proxies, min(5, len(proxies))) if proxies else []
             if not sample_proxies:
                 table_rows += f"| - | - | - | - | هیچ پروکسی فعالی یافت نشد |\n"
             for i, (proxy, ping) in enumerate(sample_proxies, 1):
                 server, port = proxy.split(':')
-                table_rows += f"| {i} | `{server}` | `{port}` | {ping:.2f}ms | ✅ فعال |\n"
+                status = "✅ فعال" if ping is not None else "❌ غیرفعال"
+                table_rows += f"| {i} | `{server}` | `{port}` | {ping:.2f}ms | {status} |\n"
+            table_rows += "\n</div>\n"
 
         readme_content = f"""# 🦁 ProxyProwler
 
@@ -189,25 +190,32 @@ def update_readme(proxy_dict):
   <img src="https://img.shields.io/github/license/Argh94/ProxyProwler?label=License&style=flat-square" alt="License">
 </div>
 
-**آخرین به‌روزرسانی:** {update_time_iran} (به وقت ایران)
-
-**فایل‌های پروکسی**: فایل‌های `SOCKS5.txt`, `SOCKS4.txt`, `HTTPS.txt`, و `requirements.txt` در [بخش Releases](https://github.com/Argh94/ProxyProwler/releases) در دسترس هستند.
+<div align="center">
+  <p><strong>آخرین به‌روزرسانی:</strong> {update_time_iran} (به وقت ایران)</p>
+  <p><strong>فایل‌های پروکسی:</strong> فایل‌های <code>SOCKS5.txt</code>, <code>SOCKS4.txt</code>, <code>HTTPS.txt</code>, و <code>requirements.txt</code> در <a href="https://github.com/Argh94/ProxyProwler/releases">بخش Releases</a> در دسترس هستند.</p>
+</div>
 
 **ProxyProwler** یک ابزار قدرتمند و خودکار پایتون برای جمع‌آوری، بررسی و مدیریت پروکسی‌های **SOCKS5**، **SOCKS4** و **HTTPS** از منابع عمومی است. این پروژه با هدف ارائه پروکسی‌های فعال و باکیفیت برای توسعه‌دهندگان و کاربران طراحی شده و خروجی‌ها را در فایل‌های مرتب ذخیره می‌کند.
 
+---
+
 ## 🎯 چرا ProxyProwler؟
-- **جمع‌آوری خودکار**: پروکسی‌ها از منابع معتبر و به‌روز جمع‌آوری می‌شوند.
-- **بررسی کیفیت**: وضعیت آنلاین بودن و پینگ هر پروکسی بررسی می‌شود.
-- **حذف تکراری‌ها**: پروکسی‌های تکراری به‌صورت خودکار حذف می‌شوند.
-- **خروجی مرتب**: پروکسی‌ها در فایل‌های جداگانه (`SOCKS5.txt`, `SOCKS4.txt`, `HTTPS.txt`) ذخیره می‌شوند.
-- **رابط کاربری حرفه‌ای**: اطلاعات پروکسی‌ها در README با جدول‌های زیبا نمایش داده می‌شود.
+- 🌐 **جمع‌آوری خودکار**: پروکسی‌ها از منابع معتبر و به‌روز جمع‌آوری می‌شوند.
+- ⚡ **بررسی کیفیت**: وضعیت آنلاین بودن و پینگ هر پروکسی بررسی می‌شود.
+- 🗑 **حذف تکراری‌ها**: پروکسی‌های تکراری به‌صورت خودکار حذف می‌شوند.
+- 📊 **خروجی مرتب**: پروکسی‌ها در فایل‌های جداگانه ذخیره می‌شوند.
+- 🖥 **رابط کاربری حرفه‌ای**: اطلاعات پروکسی‌ها در README با جدول‌های زیبا نمایش داده می‌شود.
+
+---
 
 ## 🚀 ویژگی‌ها
-- 🌐 **پشتیبانی از منابع متنوع**: جمع‌آوری پروکسی از لینک‌های متنی و JSON.
-- ⚡ **اجرای موازی**: استفاده از ThreadPoolExecutor برای بررسی سریع پروکسی‌ها.
-- 📊 **اندازه‌گیری پینگ**: نمایش پینگ هر پروکسی برای انتخاب بهترین‌ها.
-- 🗑 **حذف پروکسی‌های غیرفعال**: فقط پروکسی‌های آنلاین ذخیره می‌شوند.
-- 🕒 **به‌روزرسانی خودکار**: اجرا هر روز ساعت 2:30 به وقت ایران.
+- **پشتیبانی از منابع متنوع**: جمع‌آوری پروکسی از لینک‌های متنی و JSON.
+- **اجرای موازی**: استفاده از ThreadPoolExecutor برای بررسی سریع پروکسی‌ها.
+- **اندازه‌گیری پینگ**: نمایش پینگ هر پروکسی برای انتخاب بهترین‌ها.
+- **حذف پروکسی‌های غیرفعال**: فقط پروکسی‌های آنلاین ذخیره می‌شوند.
+- **به‌روزرسانی دستی**: از طریق GitHub Actions قابل اجرا است.
+
+---
 
 ## 📋 پیش‌نیازها
 برای اجرای این پروژه به موارد زیر نیاز دارید:
@@ -222,14 +230,18 @@ def update_readme(proxy_dict):
 
 ## 🛠 نحوه استفاده
 1. **دانلود پروکسی‌ها**:
-   - فایل‌های `SOCKS5.txt`, `SOCKS4.txt`, `HTTPS.txt`, و `requirements.txt` را از [بخش Releases](https://github.com/Argh94/ProxyProwler/releases) دانلود کنید.
+   - فایل‌های <code>SOCKS5.txt</code>, <code>SOCKS4.txt</code>, <code>HTTPS.txt</code>, و <code>requirements.txt</code> را از <a href="https://github.com/model7855/ProxyProwler/releases">بخش Releases</a> دانلود کنید.
 2. **استفاده در ابزارها**:
    - پروکسی‌ها را در کلاینت‌های خود (مثل مرورگرها یا ابزارهای شبکه) وارد کنید.
 3. **اجرای دستی**:
-   - Workflow را از تب **Actions** در GitHub اجرا کنید تا پروکسی‌ها به‌روزرسانی شوند.
+   - Workflow را از تب <strong>Actions</strong> در GitHub اجرا کنید تا پروکسی‌ها به‌روزرسانی شوند.
+
+---
 
 ## 🌍 منابع پروکسی
 ProxyProwler از منابع معتبر زیر برای جمع‌آوری پروکسی‌ها استفاده می‌کند:
+
+<div align="center">
 
 | منبع | نوع پروکسی | لینک |
 |------|-------------|------|
@@ -241,18 +253,26 @@ ProxyProwler از منابع معتبر زیر برای جمع‌آوری پرو
 | Jetkai | SOCKS5 | [GitHub](https://github.com/jetkai/proxy-list) |
 | ProxyScrape | SOCKS5 | [API](https://api.proxyscrape.com) |
 
+</div>
+
+---
+
 ## 📈 نمونه پروکسی‌ها
-جدول‌های زیر نمونه‌ای از پروکسی‌های فعال (حداکثر ۵ نمونه برای هر نوع) را همراه با پینگ آن‌ها نمایش می‌دهند:
+جدول‌های زیر نمونه‌ای از پروکسی‌های فعال (حداکثر ۵ نمونه برای هر نوع) را همراه با پینگ و وضعیت آن‌ها نمایش می‌دهند:
 
 {table_rows}
 
-> **💡 نکته**: برای دسترسی به لیست کامل و به‌روز پروکسی‌ها، فایل‌های مربوطه را از [بخش Releases](https://github.com/Argh94/ProxyProwler/releases) دانلود کنید.
+> **💡 نکته**: برای دسترسی به لیست کامل و به‌روز پروکسی‌ها، فایل‌های مربوطه را از <a href="https://github.com/Argh94/ProxyProwler/releases">بخش Releases</a> دانلود کنید.
+
+---
 
 ## 🛠 عیب‌یابی
 اگر با مشکلی مواجه شدید، این مراحل را امتحان کنید:
 - **خطای نصب کتابخانه‌ها**: مطمئن شوید فایل `requirements.txt` را از Releases دانلود کرده‌اید.
 - **عدم تولید فایل‌های پروکسی**: لاگ‌های GitHub Actions را بررسی کنید تا ببینید آیا منابع پروکسی در دسترس هستند.
 - **پروکسی‌های غیرفعال**: منابع پروکسی ممکن است موقتاً از دسترس خارج شوند. منابع جدید را به لیست `proxy_urls` اضافه کنید.
+
+---
 
 ## 🤝 مشارکت در پروژه
 ما از مشارکت شما استقبال می‌کنیم! برای کمک به بهبود ProxyProwler:
@@ -261,14 +281,18 @@ ProxyProwler از منابع معتبر زیر برای جمع‌آوری پرو
 3. Pull Request بفرستید.
 ایده‌های جدید یا گزارش باگ‌ها را از طریق **Issues** در GitHub مطرح کنید.
 
+---
+
 ## 📜 لایسنس
 این پروژه تحت **[لایسنس MIT](https://opensource.org/licenses/MIT)** منتشر شده است. شما آزادید که از کد استفاده کنید، تغییر دهید و به اشتراک بگذارید.
 
 ---
 
-**🚀 ProxyProwler** - با قدرت به دنبال پروکسی‌های فعال!  
-برای سوالات یا پیشنهادات، در GitHub با ما در تماس باشید.
-
+<div align="center">
+  <p><strong>🚀 ProxyProwler</strong> - با قدرت به دنبال پروکسی‌های فعال!</p>
+  <p>برای سوالات یا پیشنهادات، در <a href="https://github.com/Argh94/ProxyProwler/issues">GitHub</a> با ما در تماس باشید.</p>
+</div>
+"""
         filename = "README.md"
         with open(filename, 'w', encoding='utf-8') as file:
             file.write(readme_content)
@@ -277,8 +301,8 @@ ProxyProwler از منابع معتبر زیر برای جمع‌آوری پرو
             logging.info(f"Confirmed: {filename} exists in the repository root")
         else:
             logging.error(f"Failed: {filename} was not created")
-except Exception as e:
-    logging.error(f"Error updating {filename}: {e}")
+    except Exception as e:
+        logging.error(f"Error updating {filename}: {e}")
 
 if __name__ == "__main__":
     proxy_urls = {
@@ -305,7 +329,6 @@ if __name__ == "__main__":
     }
     proxy_type = sys.argv[1] if len(sys.argv) > 1 else None
     proxy_dict = {}
-
     if proxy_type and proxy_type in proxy_urls:
         all_proxies = []
         for url in proxy_urls[proxy_type]:
