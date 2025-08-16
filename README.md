@@ -4,11 +4,11 @@
   <img src="https://img.shields.io/badge/ProxyProwler-v1.0-blueviolet?style=for-the-badge&logo=python" alt="ProxyProwler Version">
   <img src="https://img.shields.io/badge/Python-3.9%2B-blue?style=flat-square&logo=python" alt="Python Version">
   <img src="https://img.shields.io/github/workflow/status/Argh94/ProxyProwler/ProxyProwler?label=Workflow&style=flat-square" alt="Workflow Status">
-  <img src="https://img.shields.io/github/license/Argh94/ProxyProwler?label=License&style=flat-square" alt="License">
+  <img src="https://img.shields.io/github/Argh94/ProxyProwler/Files/LICENSE?label=License&style=flat-square" alt="License">
 </div>
 
 <div align="center">
-  <p><strong>آخرین به‌روزرسانی:</strong> 22:50 24-05-1404 (به وقت ایران)</p>
+  <p><strong>آخرین به‌روزرسانی:</strong> 02:34 26-05-1404 (به وقت ایران)</p>
   <p><strong>فایل‌های پروکسی:</strong> فایل‌های <code>SOCKS5.txt</code>, <code>SOCKS4.txt</code>, <code>HTTPS.txt</code>, و <code>requirements.txt</code> در <a href="https://github.com/Argh94/ProxyProwler/releases">بخش Releases</a> در دسترس هستند.</p>
 </div>
 
@@ -80,43 +80,43 @@ ProxyProwler از منابع معتبر زیر برای جمع‌آوری پرو
 
 <div align="center">
 
-### 🔗 SOCKS5 Proxies (112 Active)
+### 🔗 SOCKS5 Proxies (106 Active)
 
 | # | سرور (Server) | پورت (Port) | پینگ (Ping) | وضعیت (Status) |
 |---|---------------|-------------|-------------|----------------|
-| 1 | `160.153.1.25` | `80` | 1.55ms | ✅ فعال |
-| 2 | `104.25.176.248` | `80` | 1.49ms | ✅ فعال |
-| 3 | `66.235.200.202` | `80` | 1.56ms | ✅ فعال |
-| 4 | `185.162.229.139` | `80` | 1.61ms | ✅ فعال |
-| 5 | `104.19.253.50` | `80` | 1.57ms | ✅ فعال |
+| 1 | `104.25.1.112` | `80` | 5.23ms | ✅ فعال |
+| 2 | `173.245.49.48` | `80` | 5.38ms | ✅ فعال |
+| 3 | `45.80.110.137` | `80` | 5.41ms | ✅ فعال |
+| 4 | `174.64.199.82` | `4145` | 73.62ms | ✅ فعال |
+| 5 | `47.238.60.156` | `3128` | 212.78ms | ✅ فعال |
 
 </div>
 
 <div align="center">
 
-### 🔗 SOCKS4 Proxies (35 Active)
+### 🔗 SOCKS4 Proxies (41 Active)
 
 | # | سرور (Server) | پورت (Port) | پینگ (Ping) | وضعیت (Status) |
 |---|---------------|-------------|-------------|----------------|
-| 1 | `45.85.118.20` | `80` | 1.66ms | ✅ فعال |
-| 2 | `8.211.51.115` | `84` | 93.52ms | ✅ فعال |
-| 3 | `45.61.100.231` | `6499` | 1.54ms | ✅ فعال |
-| 4 | `101.200.158.109` | `8880` | 264.97ms | ✅ فعال |
-| 5 | `1.0.0.4` | `80` | 1.33ms | ✅ فعال |
+| 1 | `174.64.199.82` | `4145` | 73.06ms | ✅ فعال |
+| 2 | `221.131.174.3` | `8118` | 207.46ms | ✅ فعال |
+| 3 | `47.250.51.110` | `9098` | 249.81ms | ✅ فعال |
+| 4 | `47.90.167.27` | `11` | 6.54ms | ✅ فعال |
+| 5 | `47.74.46.81` | `1081` | 160.67ms | ✅ فعال |
 
 </div>
 
 <div align="center">
 
-### 🔗 HTTPS Proxies (52 Active)
+### 🔗 HTTPS Proxies (51 Active)
 
 | # | سرور (Server) | پورت (Port) | پینگ (Ping) | وضعیت (Status) |
 |---|---------------|-------------|-------------|----------------|
-| 1 | `45.131.7.142` | `80` | 1.43ms | ✅ فعال |
-| 2 | `188.114.96.63` | `80` | 1.86ms | ✅ فعال |
-| 3 | `45.131.4.9` | `80` | 1.62ms | ✅ فعال |
-| 4 | `89.116.250.4` | `80` | 1.35ms | ✅ فعال |
-| 5 | `104.19.66.163` | `80` | 1.50ms | ✅ فعال |
+| 1 | `5.10.246.51` | `80` | 5.35ms | ✅ فعال |
+| 2 | `190.93.247.0` | `80` | 5.23ms | ✅ فعال |
+| 3 | `172.66.40.96` | `80` | 5.50ms | ✅ فعال |
+| 4 | `104.17.25.3` | `80` | 5.38ms | ✅ فعال |
+| 5 | `185.148.104.15` | `80` | 5.47ms | ✅ فعال |
 
 </div>
 
