@@ -187,7 +187,7 @@ def update_readme(proxy_dict):
   <img src="https://img.shields.io/badge/ProxyProwler-v1.0-blueviolet?style=for-the-badge&logo=python" alt="ProxyProwler Version">
   <img src="https://img.shields.io/badge/Python-3.9%2B-blue?style=flat-square&logo=python" alt="Python Version">
   <img src="https://img.shields.io/github/workflow/status/Argh94/ProxyProwler/ProxyProwler?label=Workflow&style=flat-square" alt="Workflow Status">
-  <img src="https://img.shields.io/github/Argh94/ProxyProwler/Files/LICENSE?label=License&style=flat-square" alt="License">
+  <img src="https://img.shields.io/github/Argh94/ProxyProwler/Files/LICENSE?label=LICENSE&style=flat-square" alt="LICENSE">
 </div>
 
 <div align="center">
