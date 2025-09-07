@@ -308,11 +308,9 @@ if __name__ == "__main__":
     proxy_urls = {
         'SOCKS5': [
             "https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS5_RAW.txt",
-            "https://raw.githubusercontent.com/officialputuid/KangProxy/KangProxy/socks5/socks5.txt",
             "https://cdn.jsdelivr.net/gh/proxifly/free-proxy-list@main/proxies/protocols/socks5/data.txt",
             "https://raw.githubusercontent.com/hookzof/socks5_list/master/tg/socks.json",
             "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks5.txt",
-            "https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-socks5.txt",
             "https://api.proxyscrape.com/v3/free-proxy-list/get?request=displayproxies&proxytype=socks5"
         ],
         'SOCKS4': [
