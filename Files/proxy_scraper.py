@@ -135,10 +135,14 @@ def fetch_proxies_from_url(url, proxy_type, max_proxies=50):
 
 def save_proxies_to_file(proxies, proxy_type):
     output_dir = os.getenv('OUTPUT_DIR', '/tmp/proxies')
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    local_output_dir = os.path.join(project_dir, 'proxies')
     filename = f"{output_dir}/{proxy_type}.txt"
+    local_filename = os.path.join(local_output_dir, f"{proxy_type}.txt")
     try:
         unique_proxies = list(set(proxy[0] for proxy in proxies))
         logging.debug(f"Unique proxies for {proxy_type}: {unique_proxies}")
+        # ذخیره در پوشه Releases 1 یا پوشه خروجی اصلی
         os.makedirs(output_dir, exist_ok=True)
         with open(filename, 'w', encoding='utf-8') as file:
             if unique_proxies:
@@ -147,13 +151,18 @@ def save_proxies_to_file(proxies, proxy_type):
             else:
                 file.write('')
         logging.info(f"Saved {len(unique_proxies)} unique {proxy_type} proxies to {filename}")
-        if os.path.exists(filename):
-            logging.info(f"Confirmed: {filename} exists in {output_dir}")
-        else:
-            logging.error(f"Failed: {filename} was not created")
+        # ذخیره در پوشه proxies داخل ریشه پروژه
+        os.makedirs(local_output_dir, exist_ok=True)
+        with open(local_filename, 'w', encoding='utf-8') as file:
+            if unique_proxies:
+                for proxy in unique_proxies:
+                    file.write(proxy + '\n')
+            else:
+                file.write('')
+        logging.info(f"Saved {len(unique_proxies)} unique {proxy_type} proxies to {local_filename}")
         return proxies
     except IOError as e:
-        logging.error(f"Error writing to {filename}: {e}")
+        logging.error(f"Error writing proxy files: {e}")
         return []
 
 def update_readme(proxy_dict):
@@ -192,10 +201,10 @@ def update_readme(proxy_dict):
 
 <div align="center">
   <p><strong>آخرین به‌روزرسانی:</strong> {update_time_iran} (به وقت ایران)</p>
-  <p><strong>فایل‌های پروکسی:</strong> فایل‌های <code>SOCKS5.txt</code>, <code>SOCKS4.txt</code>, <code>HTTPS.txt</code>, و <code>requirements.txt</code> در <a href="https://github.com/Argh94/ProxyProwler/releases">بخش Releases</a> در دسترس هستند.</p>
+  <p><strong>فایل‌های پروکسی:</strong> فایل‌های <code>SOCKS5.txt</code>, <code>SOCKS4.txt</code>, <code>HTTPS.txt</code>, و <code>requirements.txt</code> در <a href="https:/[...]
 </div>
 
-**ProxyProwler** یک ابزار قدرتمند و خودکار پایتون برای جمع‌آوری، بررسی و مدیریت پروکسی‌های **SOCKS5**، **SOCKS4** و **HTTPS** از منابع عمومی است. این پروژه با هدف ارائه پروکسی‌های فعال و باکیفیت برای توسعه‌دهندگان و کاربران طراحی شده و خروجی‌ها را در فایل‌های مرتب ذخیره می‌کند.
+**ProxyProwler** یک ابزار قدرتمند و خودکار پایتون برای جمع‌آوری، بررسی و مدیریت پروکسی‌های **SOCKS5**، **SOCKS4** و **HTTPS** از م�[...]
 
 ---
 
@@ -230,7 +239,7 @@ def update_readme(proxy_dict):
 
 ## 🛠 نحوه استفاده
 1. **دانلود پروکسی‌ها**:
-   - فایل‌های <code>SOCKS5.txt</code>, <code>SOCKS4.txt</code>, <code>HTTPS.txt</code>, و <code>requirements.txt</code> را از <a href="https://github.com/model7855/ProxyProwler/releases">بخش Releases</a> دانلود کنید.
+   - فایل‌های <code>SOCKS5.txt</code>, <code>SOCKS4.txt</code>, <code>HTTPS.txt</code>, و <code>requirements.txt</code> را از <a href="https://github.com/model7855/ProxyProwler/releases"[...]
 2. **استفاده در ابزارها**:
    - پروکسی‌ها را در کلاینت‌های خود (مثل مرورگرها یا ابزارهای شبکه) وارد کنید.
 3. **اجرای دستی**:
@@ -258,11 +267,11 @@ ProxyProwler از منابع معتبر زیر برای جمع‌آوری پرو
 ---
 
 ## 📈 نمونه پروکسی‌ها
-جدول‌های زیر نمونه‌ای از پروکسی‌های فعال (حداکثر ۵ نمونه برای هر نوع) را همراه با پینگ و وضعیت آن‌ها نمایش می‌دهند:
+جدول‌های زیر نمونه‌ای از پروکسی‌های فعال (حداکثر ۵ نمونه برای هر نوع) را همراه با پینگ و وضعیت آن‌ها نمایش می[...]
 
 {table_rows}
 
-> **💡 نکته**: برای دسترسی به لیست کامل و به‌روز پروکسی‌ها، فایل‌های مربوطه را از <a href="https://github.com/Argh94/ProxyProwler/releases">بخش Releases</a> دانلود کنید.
+> **💡 نکته**: برای دسترسی به لیست کامل و به‌روز پروکسی‌ها، فایل‌های مربوطه را از <a href="https://github.com/Argh94/ProxyProwler/releas[...]
 
 ---
 
@@ -270,7 +279,7 @@ ProxyProwler از منابع معتبر زیر برای جمع‌آوری پرو
 اگر با مشکلی مواجه شدید، این مراحل را امتحان کنید:
 - **خطای نصب کتابخانه‌ها**: مطمئن شوید فایل `requirements.txt` را از Releases دانلود کرده‌اید.
 - **عدم تولید فایل‌های پروکسی**: لاگ‌های GitHub Actions را بررسی کنید تا ببینید آیا منابع پروکسی در دسترس هستند.
-- **پروکسی‌های غیرفعال**: منابع پروکسی ممکن است موقتاً از دسترس خارج شوند. منابع جدید را به لیست `proxy_urls` اضافه کنید.
+- **پروکسی‌های غیرفعال**: منابع پروکسی ممکن است موقتاً از دسترس خارج شوند. منابع جدید را به لیست `proxy_urls` اضافه کن�[...]
 
 ---
 
@@ -284,7 +293,7 @@ ProxyProwler از منابع معتبر زیر برای جمع‌آوری پرو
 ---
 
 ## 📜 لایسنس
-این پروژه تحت **[لایسنس MIT](https://github.com/Argh94/ProxyProwler/blob/main/Files/LISENSE)** منتشر شده است. شما آزادید که از کد استفاده کنید، تغییر دهید و به اشتراک بگذارید.
+این پروژه تحت **[لایسنس MIT](https://github.com/Argh94/ProxyProwler/blob/main/Files/LISENSE)** منتشر شده است. شما آزادید که از کد استفاده کنید، �[...]
 
 ---
 
