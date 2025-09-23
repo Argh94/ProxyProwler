@@ -134,11 +134,19 @@ def fetch_proxies_from_url(url, proxy_type, max_proxies=50):
         return []
 
 def save_proxies_to_file(proxies, proxy_type):
+    # مسیر پیش‌فرض برای ذخیره فایل‌ها (برای Releases)
     output_dir = os.getenv('OUTPUT_DIR', '/tmp/proxies')
     filename = f"{output_dir}/{proxy_type}.txt"
+    
+    # مسیر جدید در ریشه پروژه
+    local_output_dir = os.path.join(os.getcwd(), 'proxy_output')
+    local_filename = f"{local_output_dir}/{proxy_type}.txt"
+    
     try:
         unique_proxies = list(set(proxy[0] for proxy in proxies))
         logging.debug(f"Unique proxies for {proxy_type}: {unique_proxies}")
+        
+        # ذخیره در مسیر پیش‌فرض (برای Releases)
         os.makedirs(output_dir, exist_ok=True)
         with open(filename, 'w', encoding='utf-8') as file:
             if unique_proxies:
@@ -151,9 +159,24 @@ def save_proxies_to_file(proxies, proxy_type):
             logging.info(f"Confirmed: {filename} exists in {output_dir}")
         else:
             logging.error(f"Failed: {filename} was not created")
+        
+        # ذخیره در پوشه جدید در ریشه پروژه
+        os.makedirs(local_output_dir, exist_ok=True)
+        with open(local_filename, 'w', encoding='utf-8') as file:
+            if unique_proxies:
+                for proxy in unique_proxies:
+                    file.write(proxy + '\n')
+            else:
+                file.write('')
+        logging.info(f"Saved {len(unique_proxies)} unique {proxy_type} proxies to {local_filename}")
+        if os.path.exists(local_filename):
+            logging.info(f"Confirmed: {local_filename} exists in {local_output_dir}")
+        else:
+            logging.error(f"Failed: {local_filename} was not created")
+        
         return proxies
     except IOError as e:
-        logging.error(f"Error writing to {filename}: {e}")
+        logging.error(f"Error writing to files: {e}")
         return []
 
 def update_readme(proxy_dict):
