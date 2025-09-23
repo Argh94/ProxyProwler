@@ -35,12 +35,12 @@ jobs:
           cat Files/urls.txt || echo "urls.txt not found"
           echo "Checking key.json:"
           cat Files/key.json || echo "key.json not found"
-          echo "Checking script.py:"
-          ls -la Files/script.py || echo "script.py not found"
+          echo "Checking proxy_scraper.py:"
+          ls -la Files/proxy_scraper.py || echo "proxy_scraper.py not found"
 
       - name: 🕸️ Run scraping script
         run: |
-          python Files/script.py || { echo "Scraper failed, check logs"; exit 1; }  # اصلاح نام فایل به script.py
+          python Files/proxy_scraper.py || { echo "Scraper failed, check logs"; exit 1; }  # اصلاح نام فایل به proxy_scraper.py
 
       - name: 📂 Check directory contents
         run: |
