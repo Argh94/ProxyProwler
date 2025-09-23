@@ -1,138 +1,96 @@
-name: ProxyProwler
+name: V2Ray Auto Config
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0,45 * * * *"
+
+permissions:
+  contents: write
 
 jobs:
-  scrape-and-release:
+  scrape-and-commit:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        proxy_type: [SOCKS5, SOCKS4, HTTPS]
-      fail-fast: false
+
     steps:
-      - name: Checkout repository
+      - name: 📥 Check out repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0  # دریافت کل تاریخچه مخزن
 
-      - name: Set up Python
+      - name: 🐍 Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.11'
+          cache: 'pip'
 
-      - name: Create or update requirements.txt
-        working-directory: ./Files
-        run: |
-          echo -e "requests\npytz\njdatetime" > requirements.txt
-
-      - name: Install dependencies
-        working-directory: ./Files
+      - name: ⚙️ Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r Files/requirements.txt
 
-      - name: Create temporary proxies directory
-        run: mkdir -p /tmp/proxies
+      - name: 📂 Check input files
+        run: |
+          echo "Checking urls.txt:"
+          cat Files/urls.txt || echo "urls.txt not found"
+          echo "Checking key.json:"
+          cat Files/key.json || echo "key.json not found"
 
-      - name: Run scraper for ${{ matrix.proxy_type }}
-        working-directory: ./Files
-        run: python proxy_scraper.py ${{ matrix.proxy_type }}
-        env:
-          OUTPUT_DIR: /tmp/proxies
+      - name: 🕸️ Run scraping script
+        run: |
+          python Files/scrip.py || { echo "Scraper failed, check logs"; exit 1; }  # استفاده از scrip.py
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+      - name: 📂 Check directory contents
+        run: |
+          echo "Listing repository contents:"
+          ls -R
+          echo "Checking for configs:"
+          ls -la configs/ || echo "configs does not exist or is empty"
+          echo "Checking for proxy_output:"
+          ls -la proxy_output/ || echo "proxy_output does not exist or is empty"
+          echo "Checking for README.md:"
+          ls -la README.md || echo "README.md does not exist"
+
+      - name: 🛠️ Create configs if not exists
+        run: |
+          mkdir -p configs
+          touch configs/.gitkeep
+          echo "Created configs/.gitkeep"
+
+      - name: 🔧 Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: ⬆️ Commit and Push Changes
+        run: |
+          git add configs/ proxy_output/ README.md || true
+          if git diff --staged --quiet; then
+            echo "No changes detected. Skipping commit."
+          else
+            echo "Changes detected. Committing..."
+            git commit -m "docs: Update README, configs, and proxy_output files 🤖 [skip ci]"
+            echo "Pulling remote changes with rebase..."
+            git fetch origin
+            git pull --rebase origin main || { echo "Rebase failed, aborting..."; git rebase --abort; exit 1; }
+            echo "Pushing changes..."
+            git push origin main || { echo "Push failed"; exit 1; }
+          fi
+
+      - name: 📦 Upload proxy files to Releases
+        uses: softprops/action-gh-release@v2
+        if: github.event_name != 'pull_request'  # فقط در صورت غیر Pull Request اجرا شود
         with:
-          name: proxy-files-${{ matrix.proxy_type }}
-          path: |
-            /tmp/proxies/${{ matrix.proxy_type }}.txt
+          files: |
+            proxy_output/SOCKS5.txt
+            proxy_output/SOCKS4.txt
+            proxy_output/HTTPS.txt
             Files/requirements.txt
-        continue-on-error: true
-
-  finalize:
-    runs-on: ubuntu-latest
-    needs: scrape-and-release
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Move artifacts to temporary directory
-        run: |
-          mkdir -p /tmp/proxies
-          for artifact in artifacts/proxy-files-*/*.txt; do
-            if [ -f "$artifact" ]; then
-              mv "$artifact" /tmp/proxies/
-            fi
-          done
-          if [ -f "artifacts/proxy-files-*/requirements.txt" ]; then
-            mv artifacts/proxy-files-*/requirements.txt /tmp/proxies/requirements.txt
-          else
-            echo -e "requests\npytz\njdatetime" > /tmp/proxies/requirements.txt
-          fi
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies for README update
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f "/tmp/proxies/requirements.txt" ]; then
-            pip install -r /tmp/proxies/requirements.txt
-          else
-            pip install requests pytz jdatetime
-          fi
-
-      - name: Run scraper to update README
-        run: python Files/proxy_scraper.py
-        env:
-          OUTPUT_DIR: /tmp/proxies
-
-      - name: Check README creation
-        run: |
-          if [ -f "README.md" ]; then
-            echo "README.md created successfully"
-          else
-            echo "Error: README.md not found"
-            exit 1
-          fi
-
-      - name: Get Current Date and Time
-        id: date
-        run: echo "CURRENT_DATE=$(TZ='Asia/Tehran' date '+%Y-%m-%d %H:%M')" >> $GITHUB_OUTPUT
-
-      - name: Create or Update Release
-        uses: softprops/action-gh-release@v1
-        with:
           tag_name: latest
-          name: "ProxyProwler Update - ${{ steps.date.outputs.CURRENT_DATE }}"
-          body: "Automated update with active proxies at ${{ steps.date.outputs.CURRENT_DATE }} (IRST)"
+          name: Latest Proxy Lists
+          body: |
+            Updated proxy lists generated by ProxyProwler at ${{ github.event.repository.updated_at }}.
           draft: false
           prerelease: false
-          files: |
-            /tmp/proxies/SOCKS5.txt
-            /tmp/proxies/SOCKS4.txt
-            /tmp/proxies/HTTPS.txt
-            /tmp/proxies/requirements.txt
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Commit and push README changes
-        run: |
-          git config --global user.name 'GitHub Action'
-          git config --global user.email 'action@github.com'
-          git add README.md
-          git commit -m "♻️ ProxyProwler Update - ${{ steps.date.outputs.CURRENT_DATE }}" || echo "No changes to commit"
-          git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
