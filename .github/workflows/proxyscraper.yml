@@ -71,11 +71,9 @@ jobs:
             echo "No changes detected. Skipping commit."
           else
             echo "Changes detected. Committing..."
-            git commit -m "♻️: Update , configs, proxy_output files 🤖 [skip ci]"
-            echo "Pulling remote changes with rebase..."
+            git commit -m "♻️: Update configs & proxy_output files 🤖 [skip ci]"
             git fetch origin
-            git pull --rebase origin main || { echo "Rebase failed, aborting..."; git rebase --abort; exit 1; }
-            echo "Pushing changes..."
+            git pull --rebase origin main || { echo "Rebase failed"; git rebase --abort; exit 1; }
             git push origin main || { echo "Push failed"; exit 1; }
           fi
 
