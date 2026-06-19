@@ -208,7 +208,7 @@ def update_readme(proxy_dict):
 
 <div align="center">
   <img src="https://img.shields.io/badge/ProxyProwler-v1.0-blueviolet?style=for-the-badge&logo=python" alt="ProxyProwler Version">
-  <img src="https://img.shields.io/badge/Python-3.9%2B-blue?style=flat-square&logo=python" alt="Python Version">
+  <img src="https://img.shields.io/badge/Python-3.11%2B-blue?style=flat-square&logo=python" alt="Python Version">
   <img src="https://img.shields.io/github/workflow/status/Argh94/ProxyProwler/ProxyProwler?label=Workflow&style=flat-square" alt="Workflow Status">
   <img src="https://img.shields.io/github/license/Argh94/ProxyProwler?label=License&style=flat-square" alt="License">
 </div>
@@ -242,7 +242,7 @@ def update_readme(proxy_dict):
 
 ## 📋 پیش‌نیازها
 برای اجرای این پروژه به موارد زیر نیاز دارید:
-- 🐍 **پایتون 3.9 یا بالاتر**
+- 🐍 **پایتون 3.11 یا بالاتر**
 - 📦 **کتابخانه‌های مورد نیاز**:
   - `requests`
   - `pytz`
